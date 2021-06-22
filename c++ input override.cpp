@@ -4,12 +4,15 @@
 #include <iostream>
 #include <vector>
 #include <windows.h>
+#include <SFML/Window/Joystick.hpp>
 #include "proc.h"
+
 
 
 
 int main()
 {
+	
 	//get wm6 proccess id
 	DWORD procId = getProcId(L"wmn6r.exe");
 
@@ -19,6 +22,21 @@ int main()
 	//get process handle
 	HANDLE hProcess = 0;
 	hProcess = OpenProcess(PROCESS_ALL_ACCESS, NULL, procId);
+
+	int x = 1;
+
+	do
+	{
+		sf::Joystick::update();
+
+		bool hasY = sf::Joystick::hasAxis(0, sf::Joystick::U);
+		std::cout << hasY << std::endl;
+
+		float position = sf::Joystick::getAxisPosition(0, sf::Joystick::U);
+		std::cout << std::to_string(position);
+	} while (x = 1); //monitors left trigger of dualshock 4
+
+
 	
 	/* leftovers
 	
@@ -45,9 +63,10 @@ int main()
 	//read coin value
 	ReadProcessMemory(hProcess, (DWORD*)coinAddr, &coinValue, sizeof(coinValue), nullptr);
 	std::cout << "New coin = " << std::dec << coinValue << std::endl;
+	*/
 
 	getchar();
-	*/
+	
 	return 0;
 }
 
