@@ -5,13 +5,14 @@
 #include <vector>
 #include <windows.h>
 #include <SFML/Window/Joystick.hpp>
+#include <chrono>
+#include <thread>
 #include "proc.h"
 
 uintptr_t brakeAddr, gasAddr;
 
 int main()
 {
-	
 	//get wm6 proccess id
 	DWORD procId = getProcId(L"wmn6r.exe");
 
@@ -42,13 +43,14 @@ int main()
 	do
 	{
 		ReadProcessMemory(hProcess, (DWORD*)rollingAddr, &rollingTimer, sizeof(rollingTimer), nullptr);
+
 		if (rollingTimer != 0)
 		{
 			//remove override
 			WriteProcessMemory(hProcess, (DWORD*)patch1Addr, &stock1, sizeof(stock1), nullptr);
 			WriteProcessMemory(hProcess, (DWORD*)patch2Addr, &stock2, sizeof(stock2), nullptr);
 
-			std::cout << "Gas found at 0x" << std::hex << gasAddr << " Brake found at 0x" << std::hex << brakeAddr<< std::endl;
+			std::cout << "Race starts in " << std::to_string(rollingTimer) << std::endl;
 		}
 		else
 		{
@@ -58,11 +60,11 @@ int main()
 
 			//resolve gas pointer
 			std::vector<unsigned int> gasOffsets = { 0xB10 };
-			uintptr_t gasAddr = findDMAAddy(hProcess, pCarStruct, gasOffsets);
+			gasAddr = findDMAAddy(hProcess, pCarStruct, gasOffsets);
 
 			//resolve brake pointer
 			std::vector<unsigned int> brakeOffsets = { 0xB14 };
-			uintptr_t brakeAddr = findDMAAddy(hProcess, pCarStruct, brakeOffsets);
+			brakeAddr = findDMAAddy(hProcess, pCarStruct, brakeOffsets);
 
 			sf::Joystick::update();
 			float left = ((sf::Joystick::getAxisPosition(0, sf::Joystick::U) + 100) / 200);
@@ -73,9 +75,8 @@ int main()
 			WriteProcessMemory(hProcess, (DWORD*)brakeAddr, &left, sizeof(left), nullptr);
 			std::cout << "| Brake at 0x" << std::hex << brakeAddr << ": " << (std::to_string(left)) << "| Gas at 0x" << std::hex << gasAddr << ": " << (std::to_string(right)) << (std::endl);
 		}
-	} while (x = 1); //monitors trigger of dualshock 4
-
-
+	std::this_thread::sleep_for(std::chrono::milliseconds(16));
+	} while (x == 1); //monitors trigger of dualshock 4
 	
 	/* leftovers
 
@@ -95,16 +96,3 @@ int main()
 	
 	return 0;
 }
-
-
-
-// Run program: Ctrl + F5 or Debug > Start Without Debugging menu
-// Debug program: F5 or Debug > Start Debugging menu
-
-// Tips for Getting Started: 
-//   1. Use the Solution Explorer window to add/manage files
-//   2. Use the Team Explorer window to connect to source control
-//   3. Use the Output window to see build output and other messages
-//   4. Use the Error List window to view errors
-//   5. Go to Project > Add New Item to create new code files, or Project > Add Existing Item to add existing code files to the project
-//   6. In the future, to open this project again, go to File > Open > Project and select the .sln file
