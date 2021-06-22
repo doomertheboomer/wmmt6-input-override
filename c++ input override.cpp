@@ -41,13 +41,6 @@ int main()
 	int x = 1;
 	do
 	{
-		/* debug stuff
-		sf::Joystick::update();
-		float left = (sf::Joystick::getAxisPosition(0, sf::Joystick::U) + 100) / 200;
-		float right = (sf::Joystick::getAxisPosition(0, sf::Joystick::V) + 100) / 200;
-		std::cout << "Left Trigger: " << (std::to_string(left)) << "| Right Trigger: " << (std::to_string(right)) << (std::endl);
-		*/
-
 		ReadProcessMemory(hProcess, (DWORD*)rollingAddr, &rollingTimer, sizeof(rollingTimer), nullptr);
 		if (rollingTimer != 0)
 		{
