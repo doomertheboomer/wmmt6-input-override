@@ -28,13 +28,10 @@ int main()
 	do
 	{
 		sf::Joystick::update();
-
-		bool hasY = sf::Joystick::hasAxis(0, sf::Joystick::U);
-		std::cout << hasY << std::endl;
-
-		float position = sf::Joystick::getAxisPosition(0, sf::Joystick::U);
-		std::cout << std::to_string(position);
-	} while (x = 1); //monitors left trigger of dualshock 4
+		float left = sf::Joystick::getAxisPosition(0, sf::Joystick::U);
+		float right = sf::Joystick::getAxisPosition(0, sf::Joystick::V);
+		std::cout << "Left Trigger: " << (std::to_string(left)) << "| Right Trigger: " << (std::to_string(right)) << (std::endl);
+	} while (x = 1); //monitors trigger of dualshock 4
 
 
 	
